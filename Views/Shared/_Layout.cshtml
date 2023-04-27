@@ -59,6 +59,17 @@
                                 }
                             </div>
                         </li>
+                        @if (User.IsInRole("northwind-employee"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-solid fa-warehouse"></i> Employee
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="Employee" asp-action="ManageInventory"><i class="fa-solid fa-pallet"></i> Manage Inventory</a>
+                                </div>
+                            </li>
+                        }
                     </ul>
                 </div>
                 @if (User?.Identity?.IsAuthenticated ?? false)

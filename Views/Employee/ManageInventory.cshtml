@@ -1,0 +1,18 @@
+@model IEnumerable<Product>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Product</i></th>
+            <th scope="col" class="text-right">Category</th>
+            <th scope="col" class="text-right pointer" id="unitsHeader">Units in Stock <i class="fa-solid fa-angle-down"></i></th>
+            <th scope="col" class="text-right">Reorder Level</th>
+        </tr>
+    </thead>
+    <tbody id="product_rows"></tbody>
+</table>
+
+@section Scripts
+{
+    <script src="../../js/inventory.js"></script>
+}
