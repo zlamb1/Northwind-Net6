@@ -13,7 +13,12 @@
 
     #product_search
     {
-        margin-left: 5px;
+        margin-left: 3px;
+    }
+
+    #color_selection
+    {
+        float: right;
         margin-bottom: 10px;
     }
 
@@ -30,6 +35,12 @@
 
 <label for="product_search">Product Search</label>
 <input type="text" id="product_search">
+
+<div id="color_selection">
+    <b class="high-stock">&emsp;&emsp;</b> = High Stock (above reorder level)<br>
+    <b class="medium-stock">&emsp;&emsp;</b> = Medium Stock (below reorder level)<br>
+    <b class="low-stock">&emsp;&emsp;</b> = Low Stock (zero stock)
+</div>  
 
 <table class="table">
     <thead>
