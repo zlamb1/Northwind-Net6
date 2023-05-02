@@ -61,22 +61,32 @@ $(async function()
         renderProducts();
     });
 
-    function invertAngle(element)
+    function setActive(element)
     {
-        if (element.hasClass('fa-angle-down'))
+        $('.active').each(function()
         {
-            element.removeClass('fa-angle-down').addClass('fa-angle-up');
+            // reset other active classes
+            $(this).removeClass('active').addClass('inactive');
+        });
+
+        element.removeClass('inactive').addClass('active'); 
+        
+        // invert icon angle and return it's state
+        let icon = element.children('i');
+        if (icon.hasClass('fa-angle-down'))
+        {
+            icon.removeClass('fa-angle-down').addClass('fa-angle-up');
             return true;
         } else
         {
-            element.removeClass('fa-angle-up').addClass('fa-angle-down');
+            icon.removeClass('fa-angle-up').addClass('fa-angle-down');
             return false; 
         }
     }
 
     $('#nameHeader').on('click', function()
     {
-        let isUp = invertAngle($(this).children('i'));
+        let isUp = setActive($(this));
         if (isUp)
             currentSort = (a, b) => -a.productName.localeCompare(b.productName);
         else
@@ -87,7 +97,7 @@ $(async function()
 
     $('#categoryHeader').on('click', function()
     {
-        let isUp = invertAngle($(this).children('i'));
+        let isUp = setActive($(this));
         if (isUp)
             currentSort = (a, b) => -a.category.categoryName.localeCompare(b.category.categoryName);
         else
@@ -98,7 +108,8 @@ $(async function()
 
     $('#unitsHeader').on('click', function()
     {
-        let isUp = invertAngle($(this).children('i')); 
+        let isUp = setActive($(this)); 
+
         if (isUp)
             currentSort = (a, b) => b.unitsInStock - a.unitsInStock;
         else
@@ -109,7 +120,7 @@ $(async function()
 
     $('#reorderHeader').on('click', function()
     {
-        let isUp = invertAngle($(this).children('i')); 
+        let isUp = setActive($(this)); 
         if (isUp)
             currentSort = (a, b) => b.reorderLevel - a.reorderLevel;
         else

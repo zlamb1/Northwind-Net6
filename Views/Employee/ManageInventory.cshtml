@@ -16,6 +16,16 @@
         margin-left: 5px;
         margin-bottom: 10px;
     }
+
+    .active
+    {
+        opacity: 1.0; 
+    }
+
+    .inactive
+    {
+        opacity: 0.6;
+    }
 </style>
 
 <label for="product_search">Product Search</label>
@@ -24,10 +34,10 @@
 <table class="table">
     <thead>
         <tr>
-            <th scope="col" class="pointer" id="nameHeader">Product Name <i class="fa-solid fa-angle-down"></i></th>
-            <th scope="col" class="text-right pointer" id="categoryHeader">Category <i class="fa-solid fa-angle-down"></i></th>
-            <th scope="col" class="text-right pointer" id="unitsHeader">Units in Stock <i class="fa-solid fa-angle-down"></i></th>
-            <th scope="col" class="text-right pointer" id="reorderHeader">Reorder Level <i class="fa-solid fa-angle-down"></i></th>
+            <th scope="col" class="pointer inactive" id="nameHeader">Product Name <i class="fa-solid fa-angle-down"></i></th>
+            <th scope="col" class="text-right pointer inactive" id="categoryHeader">Category <i class="fa-solid fa-angle-down"></i></th>
+            <th scope="col" class="text-right pointer inactive" id="unitsHeader">Units in Stock <i class="fa-solid fa-angle-down"></i></th>
+            <th scope="col" class="text-right pointer inactive" id="reorderHeader">Reorder Level <i class="fa-solid fa-angle-down"></i></th>
         </tr>
     </thead>
     <tbody id="product_rows"></tbody>
