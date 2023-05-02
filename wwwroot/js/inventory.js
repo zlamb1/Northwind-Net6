@@ -35,20 +35,20 @@ $(async function()
             let product = products[i]; 
             if (searchTerm === undefined || product.productName.includes(searchTerm))
             {
-                let classes = "";
+                let stockLevel = "high-stock";
                 if (product.unitsInStock < product.reorderLevel)
                 {
                     if (product.unitsInStock == 0)
-                        classes += "low-stock";
+                        stockLevel = "low-stock";
                     else
-                        classes += "medium-stock";
+                        stockLevel = "medium-stock";
                 }
     
                 var row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
-                    <td class="${classes}">${product.productName}</td>
-                    <td class="text-right ${classes}">${product.category.categoryName}</td>
-                    <td class="text-right ${classes}">${product.unitsInStock}</td>
-                    <td class="text-right ${classes}">${product.reorderLevel}</td>
+                    <td class="${stockLevel}">${product.productName}</td>
+                    <td class="text-right ${stockLevel}">${product.category.categoryName}</td>
+                    <td class="text-right ${stockLevel}">${product.unitsInStock}</td>
+                    <td class="text-right ${stockLevel}">${product.reorderLevel}</td>
                 </tr>`;
     
                 $('#product_rows').append(row);
