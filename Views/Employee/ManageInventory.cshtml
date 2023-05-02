@@ -31,6 +31,45 @@
     {
         opacity: 0.6;
     }
+
+    .activePageButton
+    {
+        background-color: black;
+        color: white;
+    }
+
+    .inactivePageButton
+    {
+        background-color: white;
+        color: black;
+    }
+
+    #page_buttons 
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #page_buttons > i
+    {
+        margin-right: 5px;
+    }
+
+    #page_buttons > button
+    {
+        margin-right: 5px;
+        border: 1px solid black;
+        width: 40px;
+        text-align: center;
+        user-select: none;
+    }
+
+    #page_buttons > button:hover
+    {
+        background-color: rgb(116, 116, 116);
+    }
+
 </style>
 
 <label for="product_search">Product Search</label>
@@ -53,6 +92,10 @@
     </thead>
     <tbody id="product_rows"></tbody>
 </table>
+
+<div id="page_buttons">
+
+</div>
 
 @section Scripts
 {

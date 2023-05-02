@@ -10,6 +10,10 @@ $(async function()
         return (a.unitsInStock - a.reorderLevel) - (b.unitsInStock - b.reorderLevel); 
     };
 
+    const pageSize = 10; 
+    let currentPage = 0; 
+    let maxPage = 0; 
+
     renderProducts();
 
     async function loadProducts()
@@ -26,38 +30,69 @@ $(async function()
 
     function renderProducts()
     {
-        $('#product_rows').html("");
+        $('#product_rows').html('');
         let searchTerm = $('#product_search').val(); 
         products.sort(currentSort);
 
-        for (var i = 0; i < products.length; i++)
+        let searchedProducts = [];
+        for (let i = 0; i < products.length; i++)
         {
-            let product = products[i]; 
-            if (searchTerm === undefined || product.productName.includes(searchTerm))
+            if (searchTerm === undefined || products[i].productName.includes(searchTerm))
             {
-                let stockLevel = "high-stock";
-                if (product.unitsInStock < product.reorderLevel)
-                {
-                    if (product.unitsInStock == 0)
-                        stockLevel = "low-stock";
-                    else
-                        stockLevel = "medium-stock";
-                }
+                searchedProducts.push(products[i]);
+            }
+        }
+
+        let currentIndex = currentPage * pageSize; 
+        for (var i = currentIndex; i < currentIndex + pageSize; i++)
+        {
+            if (i >= searchedProducts.length) break; 
+
+            let product = searchedProducts[i]; 
+            let stockLevel = "high-stock";
+            if (product.unitsInStock < product.reorderLevel)
+            {
+                if (product.unitsInStock == 0)
+                    stockLevel = "low-stock";
+                else
+                    stockLevel = "medium-stock";
+            }
     
-                var row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
-                    <td class="${stockLevel}">${product.productName}</td>
-                    <td class="text-right ${stockLevel}">${product.category.categoryName}</td>
-                    <td class="text-right ${stockLevel}">${product.unitsInStock}</td>
-                    <td class="text-right ${stockLevel}">${product.reorderLevel}</td>
-                </tr>`;
+            var row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
+                <td class="${stockLevel}">${product.productName}</td>
+                <td class="text-right ${stockLevel}">${product.category.categoryName}</td>
+                <td class="text-right ${stockLevel}">${product.unitsInStock}</td>
+                <td class="text-right ${stockLevel}">${product.reorderLevel}</td>
+            </tr>`;
     
-                $('#product_rows').append(row);
+            $('#product_rows').append(row);
+        }
+
+        $('#page_buttons').html('');
+        if (searchedProducts.length > 0)
+        {
+            maxPage = Math.ceil(searchedProducts.length / pageSize);
+            for (let i = 0; i < searchedProducts.length; i += pageSize)
+            {
+                let index = i / pageSize;
+                let active = index == currentPage ? 'activePageButton' : 'inactivePageButton';
+                let button = `<button class='${active}' data-page='${index}'>${index + 1}</button>`;
+                $('#page_buttons').append(button);
+            }
+
+            if (searchedProducts.length > pageSize)
+            {
+                $('#page_buttons').prepend('<i class="fa-solid fa-angles-left pointer" id="back"></i>');
+                $('#page_buttons').append('<i class="fa-solid fa-angles-right pointer" id="next"></i>');
             }
         }
     }
 
     $('#product_search').on('input', function()
     {
+        // reset page
+        currentPage = 0; 
+        // render products
         renderProducts();
     });
 
@@ -127,6 +162,33 @@ $(async function()
             currentSort = (a, b) => a.reorderLevel - b.reorderLevel; 
 
         renderProducts();
+    });
+
+    $('#page_buttons').on('click', 'button', function()
+    {
+        currentPage = $(this).data('page');
+        renderProducts();
+    });
+
+    $('#page_buttons').on('click', 'i', function()
+    {
+        let old = currentPage;
+
+        if ($(this).attr('id') == 'back')
+        {
+            currentPage--;
+            if (currentPage < 0)
+                currentPage = maxPage - 1;
+        } else
+        {
+            currentPage++;
+            if (currentPage >= maxPage)
+                currentPage = 0;
+        }
+        
+        // render products if page has changed
+        if (old != currentPage)
+            renderProducts();
     });
 
 });
