@@ -79,13 +79,13 @@ $(async function()
         {
             if (i >= searchedProducts.length)
             {
-                let row = `<tr class="no-border empty-product-row">
-                    <td class="no-border empty-product-row"></td>
-                    <td class="no-border empty-product-row"></td>
-                    <td class="no-border empty-product-row"></td>
-                    <td class="no-border empty-product-row"></td>
-                </tr>`;
-                $('#product_rows').append(row);
+                let row = $(`<tr class='empty-product-row'>
+                    <td class='empty-product-row'>&nbsp;</td>
+                    <td class='empty-product-row'>&nbsp;</td>
+                    <td class='empty-product-row'>&nbsp;</td>
+                    <td class='empty-product-row'>&nbsp;</td>
+                </tr>`);
+                row.appendTo('#product_rows');
                 continue;
             } 
 
@@ -99,14 +99,13 @@ $(async function()
                     stockLevel = "medium-stock";
             }
             
-            let row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
-                <td class="${stockLevel}">${product.productName}</td>
-                <td class="text-right ${stockLevel}">${getCategoryName(product.categoryId)}</td>
-                <td class="text-right ${stockLevel}">${product.unitsInStock}</td>
-                <td class="text-right ${stockLevel}">${product.reorderLevel}</td>
-            </tr>`;
-    
-            $('#product_rows').append(row);
+            let row = $(`<tr>
+                <td class='${stockLevel} product_row'>${product.productName}</td>
+                <td class='text-right product_row ${stockLevel}'>${getCategoryName(product.categoryId)}</td>
+                <td class='text-right product_row ${stockLevel}'>${product.unitsInStock}</td>
+                <td class='text-right product_row ${stockLevel}'>${product.reorderLevel}</td>
+            </tr>`);
+            row.appendTo('#product_rows').hide().fadeIn(300);
         }
 
         $('#page_buttons').html('');

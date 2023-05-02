@@ -1,16 +1,30 @@
+:root
+{
+    --product-border-color: rgb(59, 59, 59);
+    --global-font-size: 18px; 
+}
+
+table 
+{
+    font-size: var(--global-font-size);
+}
+
 thead > tr > th
 {
     user-select: none;
+    border-top: none !important;
+    border-bottom: none !important; 
 }
 
 #product_rows > tr
 {
     user-select: none;
+    height: 52px;
 }
 
 #product_rows > tr > td
 {
-    height: 50px;
+    border-top-color: var(--product-border-color);
 }
 
 #product_search, #product_categories
@@ -18,12 +32,13 @@ thead > tr > th
     margin-left: 10px;
     float: right;
     width: 200px;
-    height: 25px;
+    height: 30px;
 }
 
 #filter_selection
 {
     display: inline-block;
+    font-size: var(--global-font-size);
 }
 
 #color_selection
@@ -31,6 +46,7 @@ thead > tr > th
     display: inline;
     float: right;
     margin-bottom: 10px;
+    font-size: var(--global-font-size);
 }
 
 .active
