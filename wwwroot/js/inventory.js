@@ -1,6 +1,8 @@
 $(async function()
 {
+    let categories = await loadCategories();
     let products = await loadProducts(); 
+
     let currentSort = (a, b) => 
     {
         if (a.unitsInStock == 0)
@@ -10,11 +12,23 @@ $(async function()
         return (a.unitsInStock - a.reorderLevel) - (b.unitsInStock - b.reorderLevel); 
     };
 
+    renderCategories(); 
+
     const pageSize = 10; 
     let currentPage = 0; 
     let maxPage = 0; 
-
     renderProducts();
+
+    async function loadCategories()
+    {
+        return await $.getJSON({
+            url: `../../api/category/`,
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log("The following error occured: " + textStatus, errorThrown); 
+            }
+        });
+    }
 
     async function loadProducts()
     {
@@ -28,25 +42,52 @@ $(async function()
         });
     }
 
+    function getCategoryName(id)
+    {
+        return categories.find(c => c.categoryId == id).categoryName; 
+    }
+
+    function renderCategories()
+    {
+        $('#product_categories').html(''); 
+        $('#product_categories').append(`<option data-id='-1'>All</option>`);
+        for (let i = 0; i < categories.length; i++)
+        {
+            let html = `<option data-id='${categories[i].categoryId}'>${categories[i].categoryName}</option>`; 
+            $('#product_categories').append(html);
+        }
+    }
+
     function renderProducts()
     {
         $('#product_rows').html('');
         let searchTerm = $('#product_search').val(); 
         products.sort(currentSort);
 
+        let selectedCategory = $('#product_categories').find(':selected').data('id');
+
         let searchedProducts = [];
         for (let i = 0; i < products.length; i++)
         {
             if (searchTerm === undefined || products[i].productName.includes(searchTerm))
-            {
-                searchedProducts.push(products[i]);
-            }
+                if (selectedCategory < 0 || selectedCategory == products[i].categoryId)
+                    searchedProducts.push(products[i]);
         }
 
         let currentIndex = currentPage * pageSize; 
         for (var i = currentIndex; i < currentIndex + pageSize; i++)
         {
-            if (i >= searchedProducts.length) break; 
+            if (i >= searchedProducts.length)
+            {
+                let row = `<tr class="no-border empty-product-row">
+                    <td class="no-border empty-product-row"></td>
+                    <td class="no-border empty-product-row"></td>
+                    <td class="no-border empty-product-row"></td>
+                    <td class="no-border empty-product-row"></td>
+                </tr>`;
+                $('#product_rows').append(row);
+                continue;
+            } 
 
             let product = searchedProducts[i]; 
             let stockLevel = "high-stock";
@@ -57,10 +98,10 @@ $(async function()
                 else
                     stockLevel = "medium-stock";
             }
-    
-            var row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
+            
+            let row = `<tr data-id="${product.productId}" data-name="${product.productName}" data-price="${product.unitPrice}">
                 <td class="${stockLevel}">${product.productName}</td>
-                <td class="text-right ${stockLevel}">${product.category.categoryName}</td>
+                <td class="text-right ${stockLevel}">${getCategoryName(product.categoryId)}</td>
                 <td class="text-right ${stockLevel}">${product.unitsInStock}</td>
                 <td class="text-right ${stockLevel}">${product.reorderLevel}</td>
             </tr>`;
@@ -94,6 +135,12 @@ $(async function()
         currentPage = 0; 
         // render products
         renderProducts();
+    });
+
+    $('#product_categories').on('change', function()
+    {
+        currentPage = 0;
+        renderProducts(); 
     });
 
     function setActive(element)
@@ -134,9 +181,9 @@ $(async function()
     {
         let isUp = setActive($(this));
         if (isUp)
-            currentSort = (a, b) => -a.category.categoryName.localeCompare(b.category.categoryName);
+            currentSort = (a, b) => -getCategoryName(a.categoryId).localeCompare(getCategoryName(b.categoryId));
         else
-            currentSort = (a, b) => a.category.categoryName.localeCompare(b.category.categoryName);
+            currentSort = (a, b) => getCategoryName(a.categoryId).localeCompare(getCategoryName(b.categoryId));
 
         renderProducts(); 
     });

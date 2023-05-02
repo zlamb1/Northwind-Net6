@@ -8,13 +8,27 @@ thead > tr > th
     user-select: none;
 }
 
-#product_search
+#product_rows > tr > td
 {
-    margin-left: 3px;
+    height: 50px;
+}
+
+#product_search, #product_categories
+{
+    margin-left: 10px;
+    float: right;
+    width: 200px;
+    height: 25px;
+}
+
+#filter_selection
+{
+    display: inline-block;
 }
 
 #color_selection
 {
+    display: inline;
     float: right;
     margin-bottom: 10px;
 }
@@ -27,6 +41,11 @@ thead > tr > th
 .inactive
 {
     opacity: 0.6;
+}
+
+.empty-product-row
+{
+    border-top: none !important;
 }
 
 .activePageButton

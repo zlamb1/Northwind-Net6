@@ -10,9 +10,9 @@ namespace Northwind.Controllers
         // this controller depends on the NorthwindRepository
         private DataContext _dataContext;
         public APIController(DataContext db) => _dataContext = db;
-        [HttpGet, Route("api/category/name/{id}")]
+        [HttpGet, Route("api/category")]
         // returns category
-        public Category GetCategory(int id) => _dataContext.Categories.FirstOrDefault(c => c.CategoryId == id); 
+        public IEnumerable<Category> GetCategories(int id) => _dataContext.Categories; 
         [HttpGet, Route("api/product")]
         // returns all products
         public IEnumerable<Product> GetProducts() => _dataContext.Products.OrderBy(p => p.ProductName);
@@ -21,7 +21,7 @@ namespace Northwind.Controllers
         public Product GetProduct(int id) => _dataContext.Products.FirstOrDefault(p => p.ProductId == id);
         [HttpGet, Route("api/product/discontinued/{discontinued}")]
         // returns all products where discontinued = true/false
-        public IEnumerable<Product> GetDiscontinued(bool discontinued) => _dataContext.Products.Include(p => p.Category).Where(p => p.Discontinued == discontinued).OrderBy(p => p.ProductName);
+        public IEnumerable<Product> GetDiscontinued(bool discontinued) => _dataContext.Products.Where(p => p.Discontinued == discontinued).OrderBy(p => p.ProductName);
         [HttpGet, Route("api/category/{CategoryId}/product")]
         // returns all products in a specific category
         public IEnumerable<Product> GetByCategory(int CategoryId) => _dataContext.Products.Where(p => p.CategoryId == CategoryId).OrderBy(p => p.ProductName);
