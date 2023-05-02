@@ -1,6 +1,7 @@
-$(function()
+$(async function()
 {
-    getProducts((a, b) => 
+    let products = await loadProducts(); 
+    renderProducts((a, b) => 
     {
         if (a.unitsInStock == 0)
             return -1; 
@@ -9,60 +10,47 @@ $(function()
         return (a.unitsInStock - a.reorderLevel) - (b.unitsInStock - b.reorderLevel); 
     });
 
-    async function getCategory(categoryId)
+    async function loadProducts()
     {
-        const data = await $.getJSON({
-            url: `../../api/category/name/${categoryId}/`,
-            success: function(response, textStatus, jqXhr)
-            {
-                categoryName = response.categoryName; 
-            },
-            error: function(jqXHR, textStatus, errorThrown) 
-            { 
-                // log the error to the console
-                console.log("The following error occured: " + textStatus, errorThrown);
-            }
-        });
-
-        return data.categoryName; 
-    }
-
-    async function getProducts(sortFunction)
-    {
-        $.getJSON({
+        return await $.getJSON({
             url: `../../api/product/discontinued/false/`,
-            success: async function (response, textStatus, jqXhr) 
-            {
-                $('#product_rows').html("");
-                response.sort(sortFunction);
-                for (var i = 0; i < response.length; i++)
-                {
-                    var categoryName = await getCategory(response[i].categoryId);
-                    var stockCSS = "";
-                    if (response[i].unitsInStock < response[i].reorderLevel)
-                    {
-                        stockCSS = "medium-stock";
-                    }
-                    if (response[i].unitsInStock == 0)
-                    {
-                        stockCSS = "low-stock";
-                    }
-
-                    var row = `<tr data-id="${response[i].productId}" data-name="${response[i].productName}" data-price="${response[i].unitPrice}" style="user-select:none;">
-                        <td class="${stockCSS}">${response[i].productName}</td>
-                        <td class="${stockCSS}">${categoryName}</td>
-                        <td class="text-right ${stockCSS}">${response[i].unitsInStock}</td>
-                        <td class="text-right ${stockCSS}">${response[i].reorderLevel}</td>
-                    </tr>`;
-                    $('#product_rows').append(row);
-                }
-            },
             error: function (jqXHR, textStatus, errorThrown) 
             {
                 // log the error to the console
                 console.log("The following error occured: " + textStatus, errorThrown);
             }
         });
+    }
+    
+    function renderProducts(sort)
+    {
+        $('#product_rows').html("");
+
+        products.sort(sort);
+        for (var i = 0; i < products.length; i++)
+        {
+            var category = ""; 
+            var css = "";
+
+            if (products[i].unitsInStock < products[i].reorderLevel)
+            {
+                css = "medium-stock";
+            }
+
+            if (products[i].unitsInStock == 0)
+            {
+                css = "low-stock";
+            }
+
+            var row = `<tr data-id="${products[i].productId}" data-name="${products[i].productName}" data-price="${products[i].unitPrice}" style="user-select:none;">
+                <td class="${css}">${products[i].productName}</td>
+                <td class="text-right ${css}">${products[i].category.categoryName}</td>
+                <td class="text-right ${css}">${products[i].unitsInStock}</td>
+                <td class="text-right ${css}">${products[i].reorderLevel}</td>
+            </tr>`;
+
+            $('#product_rows').append(row);
+        }
     }
 
     $('#unitsHeader').on('click', function()
@@ -71,12 +59,12 @@ $(function()
         if (icon.hasClass('fa-angle-down'))
         {
             icon.removeClass('fa-angle-down').addClass('fa-angle-up');
-            getProducts((a, b) => b.unitsInStock - a.unitsInStock);
+            renderProducts((a, b) => b.unitsInStock - a.unitsInStock);
         }
         else
         {
             icon.removeClass('fa-angle-up').addClass('fa-angle-down');
-            getProducts((a, b) => a.unitsInStock - b.unitsInStock);
+            renderProducts((a, b) => a.unitsInStock - b.unitsInStock);
         }
     });
 });

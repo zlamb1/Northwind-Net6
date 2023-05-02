@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 // Connection info stored in appsettings.json
 IConfiguration configuration = new ConfigurationBuilder()
@@ -22,6 +23,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(opts =>
         opts.Password.RequireDigit = false;
     }
 ).AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
+
+builder.Services.AddControllers().AddJsonOptions(x => 
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 var app = builder.Build();
 
