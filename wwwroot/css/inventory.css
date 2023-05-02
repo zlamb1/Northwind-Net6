@@ -81,6 +81,8 @@ thead > tr > th
     display: flex;
     justify-content: center;
     align-items: center;
+    width: fit-content;
+    margin: auto;
 }
 
 #page_buttons > i
@@ -100,4 +102,24 @@ thead > tr > th
 #page_buttons > button:hover
 {
     background-color: rgb(116, 116, 116);
+}
+
+.color-key
+{
+    border: 1px solid black;
+}
+
+.low-stock
+{
+  background-color: rgb(142, 37, 37);
+}
+
+.medium-stock
+{
+  background-color: yellow;
+}
+
+.high-stock
+{
+  background-color: white;
 }

@@ -101,18 +101,3 @@ body
 {
   cursor: pointer;
 }
-
-.low-stock
-{
-  background-color: rgb(142, 37, 37);
-}
-
-.medium-stock
-{
-  background-color: yellow;
-}
-
-.high-stock
-{
-  background-color: rgb(20, 226, 20);
-}

@@ -105,19 +105,43 @@ $(async function()
                 <td class='text-right product_row ${stockLevel}'>${product.unitsInStock}</td>
                 <td class='text-right product_row ${stockLevel}'>${product.reorderLevel}</td>
             </tr>`);
-            row.appendTo('#product_rows').hide().fadeIn(300);
+            row.appendTo('#product_rows');
         }
+        
+        renderPageButtons(searchedProducts); 
+    }
 
+    function renderPageButtons(searchedProducts)
+    {
+        const initialWidth = 42;
+        const documentWidth = $(document).width(); 
+        const maxWidthPercentage = 0.3; 
         $('#page_buttons').html('');
         if (searchedProducts.length > 0)
         {
             maxPage = Math.ceil(searchedProducts.length / pageSize);
-            for (let i = 0; i < searchedProducts.length; i += pageSize)
+            $('#page_buttons').append($(`<button class='activePageButton' data-page='${currentPage}'>${currentPage + 1}</button>`));
+            let currentWidth = initialWidth; 
+            for (let i = 1; i < maxPage; i++)
             {
-                let index = i / pageSize;
-                let active = index == currentPage ? 'activePageButton' : 'inactivePageButton';
-                let button = `<button class='${active}' data-page='${index}'>${index + 1}</button>`;
-                $('#page_buttons').append(button);
+                if ((currentWidth + 45) / documentWidth <= maxWidthPercentage)
+                {
+                    let index = currentPage - i;
+                    if (index >= 0)
+                    {
+                        $('#page_buttons').prepend($(`<button class='inactivePageButton' data-page='${index}'>${index + 1}</button>`));
+                        currentWidth += 45; 
+                    }
+                }
+                if ((currentWidth + 45) / documentWidth <= maxWidthPercentage)
+                {
+                    let index = currentPage + i;
+                    if (index < maxPage)
+                    {
+                        $('#page_buttons').append($(`<button class='inactivePageButton' data-page='${index}'>${index + 1}</button>`));
+                        currentWidth += 45; 
+                    }
+                }
             }
 
             if (searchedProducts.length > pageSize)
@@ -125,7 +149,7 @@ $(async function()
                 $('#page_buttons').prepend('<i class="fa-solid fa-angles-left pointer" id="back"></i>');
                 $('#page_buttons').append('<i class="fa-solid fa-angles-right pointer" id="next"></i>');
             }
-        }
+        }  
     }
 
     $('#product_search').on('input', function()
@@ -138,7 +162,9 @@ $(async function()
 
     $('#product_categories').on('change', function()
     {
+        // reset page
         currentPage = 0;
+        // render products
         renderProducts(); 
     });
 
@@ -237,4 +263,8 @@ $(async function()
             renderProducts();
     });
 
+    $(window).on('resize', function()
+    {
+        renderProducts();
+    });
 });
