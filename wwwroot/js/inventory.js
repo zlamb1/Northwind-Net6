@@ -17,6 +17,8 @@ $(async function()
     const pageSize = 10; 
     let currentPage = 0; 
     let maxPage = 0; 
+    let searchedProducts = []; 
+
     renderProducts();
 
     async function loadCategories()
@@ -62,11 +64,10 @@ $(async function()
     {
         $('#product_rows').html('');
         let searchTerm = $('#product_search').val(); 
-        products.sort(currentSort);
 
         let selectedCategory = $('#product_categories').find(':selected').data('id');
 
-        let searchedProducts = [];
+        searchedProducts = [];
         for (let i = 0; i < products.length; i++)
         {
             if (searchTerm === undefined || products[i].productName.includes(searchTerm))
@@ -74,6 +75,7 @@ $(async function()
                     searchedProducts.push(products[i]);
         }
 
+        searchedProducts.sort(currentSort);
         let currentIndex = currentPage * pageSize; 
         for (var i = currentIndex; i < currentIndex + pageSize; i++)
         {
@@ -91,7 +93,7 @@ $(async function()
 
             let product = searchedProducts[i]; 
             let stockLevel = "high-stock";
-            if (product.unitsInStock < product.reorderLevel)
+            if (product.unitsInStock < product.reorderLevel || product.reorderLevel <= 0)
             {
                 if (product.unitsInStock == 0)
                     stockLevel = "low-stock";
@@ -108,10 +110,10 @@ $(async function()
             row.appendTo('#product_rows');
         }
         
-        renderPageButtons(searchedProducts); 
+        renderPageButtons(); 
     }
 
-    function renderPageButtons(searchedProducts)
+    function renderPageButtons()
     {
         const initialWidth = 42;
         const documentWidth = $(document).width(); 
@@ -124,7 +126,7 @@ $(async function()
             let currentWidth = initialWidth; 
             for (let i = 1; i < maxPage; i++)
             {
-                if ((currentWidth + 45) / documentWidth <= maxWidthPercentage)
+                if ((currentWidth + 90) / documentWidth <= maxWidthPercentage)
                 {
                     let index = currentPage - i;
                     if (index >= 0)
@@ -132,16 +134,14 @@ $(async function()
                         $('#page_buttons').prepend($(`<button class='inactivePageButton' data-page='${index}'>${index + 1}</button>`));
                         currentWidth += 45; 
                     }
-                }
-                if ((currentWidth + 45) / documentWidth <= maxWidthPercentage)
-                {
-                    let index = currentPage + i;
+
+                    index = currentPage + i;
                     if (index < maxPage)
                     {
                         $('#page_buttons').append($(`<button class='inactivePageButton' data-page='${index}'>${index + 1}</button>`));
                         currentWidth += 45; 
                     }
-                }
+                } else break;
             }
 
             if (searchedProducts.length > pageSize)
@@ -150,6 +150,22 @@ $(async function()
                 $('#page_buttons').append('<i class="fa-solid fa-angles-right pointer" id="next"></i>');
             }
         }  
+    }
+
+    // function for testing pagination system
+    function addFakeProducts(number)
+    {
+        for (let i = 0; i < number; i++)
+        {
+            let product = {
+                productName: "test",
+                categoryId: 1,
+                unitsInStock: 0,
+                reorderLevel: 0
+            };
+    
+            products.push(product);
+        }
     }
 
     $('#product_search').on('input', function()
@@ -265,6 +281,7 @@ $(async function()
 
     $(window).on('resize', function()
     {
-        renderProducts();
+        // update buttons if page size changes
+        renderPageButtons();
     });
 });
