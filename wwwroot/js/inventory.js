@@ -158,7 +158,7 @@ $(async function()
         for (let i = 0; i < number; i++)
         {
             let product = {
-                productName: "test",
+                productName: 'Product #' + i,
                 categoryId: 1,
                 unitsInStock: 0,
                 reorderLevel: 0
