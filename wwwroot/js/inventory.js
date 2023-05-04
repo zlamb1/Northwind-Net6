@@ -5,11 +5,19 @@ $(async function()
 
     let currentSort = (a, b) => 
     {
+        if (a.unitsInStock == 0 && b.unitsInStock == 0)
+            return a.productName.localeCompare(b.productName); 
         if (a.unitsInStock == 0)
             return -1; 
         if (b.unitsInStock == 0)
             return 1;
-        return (a.unitsInStock - a.reorderLevel) - (b.unitsInStock - b.reorderLevel); 
+        if (a.unitsInStock < a.reorderLevel && b.unitsInStock < b.reorderLevel)
+            return a.productName.localeCompare(b.productName); 
+        if (a.unitsInStock < a.reorderLevel)
+            return -1;
+        if (b.unitsInStock < b.reorderLevel)
+            return 1; 
+        return a.productName.localeCompare(b.productName); 
     };
 
     renderCategories(); 
@@ -104,8 +112,12 @@ $(async function()
             let row = $(`<tr>
                 <td class='${stockLevel} product_row'>${product.productName}</td>
                 <td class='text-right product_row ${stockLevel}'>${getCategoryName(product.categoryId)}</td>
-                <td class='text-right product_row ${stockLevel}'>${product.unitsInStock}</td>
-                <td class='text-right product_row ${stockLevel}'>${product.reorderLevel}</td>
+                <td class='product_row ${stockLevel}'>
+                    <input class='stock_input' type='number' value='${product.unitsInStock}' data-product-id='${product.productId}'>
+                </td>
+                <td class='text-right product_row ${stockLevel}'>
+                    <input class='reorder_input' type='number' value='${product.reorderLevel}' data-product-id='${product.productId}'>
+                </td>
             </tr>`);
             row.appendTo('#product_rows');
         }
@@ -283,5 +295,47 @@ $(async function()
     {
         // update buttons if page size changes
         renderPageButtons();
+    });
+
+    $(document).on('change', '.stock_input', async function()
+    {
+        let productId = $(this).data('product-id'); 
+        products.find(p => p.productId == productId).unitsInStock = Number($(this).val()); 
+        await $.ajax({
+            type: 'POST',
+            url: './EditProductStock',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: productId,
+                stock: $(this).val()
+            }), 
+            error: function()
+            {
+                console.log('Failed to update product stock!');
+            }
+        });
+
+        renderProducts(); 
+    });
+
+    $(document).on('change', '.reorder_input', async function()
+    {
+        let productId = $(this).data('product-id'); 
+        products.find(p => p.productId == productId).reorderLevel = Number($(this).val()); 
+        await $.ajax({
+            type: 'POST',
+            url: './EditProductReorderLevel',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: productId,
+                reorderLevel: $(this).val()
+            }), 
+            error: function()
+            {
+                console.log('Failed to update product stock!');
+            }
+        });
+
+        renderProducts(); 
     });
 });
