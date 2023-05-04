@@ -13,6 +13,7 @@ public class EmployeeController : Controller
     }
 
     [Authorize(Roles = "northwind-employee")]
+    [HttpGet]
     public async System.Threading.Tasks.Task<IActionResult> ManageInventory() 
     {
         return View(_dataContext.Products.Where(p => !p.Discontinued)); 
