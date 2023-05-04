@@ -123,3 +123,12 @@ thead > tr > th
 {
   background-color: white;
 }
+
+.stock_input, .reorder_input
+{
+    background-color: white;
+    border: 1px solid black;
+    width: 120px;
+    text-align: left; 
+    float: right; 
+}
