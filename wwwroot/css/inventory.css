@@ -1,7 +1,7 @@
 :root
 {
     --product-border-color: rgb(59, 59, 59);
-    --global-font-size: 18px; 
+    --global-font-size: 1.2vw; 
 }
 
 table 
@@ -32,7 +32,8 @@ thead > tr > th
     margin-left: 10px;
     float: right;
     width: 200px;
-    height: 30px;
+    line-height: var(--global-font-size);
+    font-size: var(--global-font-size);
 }
 
 #filter_selection
@@ -57,6 +58,11 @@ thead > tr > th
 .inactive
 {
     opacity: 0.6;
+}
+
+.column_header:hover
+{
+    opacity: 1.0;
 }
 
 .empty-product-row
